@@ -8,13 +8,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
       
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+        
       - name: Create config.js
         run: |
           cp config.example.js config.js
-          sed -i 's/YOUR_DEEPSEEK_API_KEY/${{ secrets.DEEPSEEK_API_KEY }}/g' config.js
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
