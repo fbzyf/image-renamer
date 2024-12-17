@@ -58,10 +58,9 @@ class ImageRenamer {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    // 确保使用正确的路径
-                    const swPath = this.config.BASE_PATH + '/sw.js';
+                    const swPath = './sw.js';
                     const registration = await navigator.serviceWorker.register(swPath, {
-                        scope: this.config.BASE_PATH + '/'
+                        scope: './'
                     });
                     console.log('ServiceWorker 注册成功:', registration.scope);
                     this.showOfflineReady();
@@ -70,7 +69,7 @@ class ImageRenamer {
                     // 添加详细错误信息
                     if (err.name === 'TypeError') {
                         console.warn('提示：请确保 sw.js 文件存在且可访问');
-                        console.warn('当前路径:', this.config.BASE_PATH + '/sw.js');
+                        console.warn('当前路径:', './sw.js');
                     }
                 }
             });
@@ -186,7 +185,7 @@ class ImageRenamer {
                             this.updatePreviewStatus(imageData, `识别中: ${Math.round(m.progress * 100)}%`);
                         }
                     },
-                    // 添加方向检测和自动旋转
+                    // 添加���向检测和自动旋转
                     tessedit_pageseg_mode: Tesseract.PSM.AUTO_OSD,
                     preserve_interword_spaces: '1',
                     textord_tabfind_vertical_text: '1',

@@ -7,11 +7,10 @@ const getBasePath = () => {
 
 // 缓存文件列表
 const getCacheFiles = (basePath) => [
-    basePath,
-    basePath + 'index.html',
-    basePath + 'styles.css',
-    basePath + 'app.js',
-    basePath + 'config.js',
+    './',
+    './index.html',
+    './styles.css',
+    './app.js',
     'https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'
 ];
 
@@ -57,7 +56,7 @@ self.addEventListener('fetch', event => {
                 return cachedResponse;
             }
 
-            // 如果缓存中没有，���从网络获取
+            // 如果缓存中没有，���网络获取
             try {
                 const response = await fetch(event.request);
                 
