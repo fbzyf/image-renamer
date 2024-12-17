@@ -15,14 +15,19 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v2
-        
-      - name: Create config.js
+      
+      - name: Prepare files
         run: |
-          cp config.example.js config.js
+          # 更新 HTML 文件中的路径
+          find . -type f -name "*.html" -exec sed -i 's|href="/|href="./|g' {} +
+          find . -type f -name "*.html" -exec sed -i 's|src="/|src="./|g' {} +
+          
+          # 确保所有文件都有正确的权限
+          chmod -R 644 ./*
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          force_orphan: true 
+          force_orphan: true
