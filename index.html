@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 智能图片重命名工具</title>
-    <link rel="stylesheet" href="/image-renamer/styles.css">
     <script>
+        const isGitHub = location.hostname.includes('github.io');
+        window.BASE_PATH = isGitHub ? '/image-renamer' : '';
+        
         window.CONFIG = {
             DEEPSEEK_API_KEY: 'YOUR_DEEPSEEK_API_KEY',
             API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
@@ -28,6 +30,7 @@
             useLocalNaming: true
         };
     </script>
+    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <div class="container">
@@ -70,19 +73,22 @@
         </div>
     </div>
     
-    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js" defer></script>
-    <script src="/image-renamer/app.js" defer></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <script src="./app.js"></script>
     
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/image-renamer/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker 注册成功:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.error('ServiceWorker 注册失败:', error);
-                    });
+                const swPath = window.BASE_PATH + '/sw.js';
+                navigator.serviceWorker.register(swPath, {
+                    scope: window.BASE_PATH + '/'
+                })
+                .then(registration => {
+                    console.log('ServiceWorker 注册成功:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('ServiceWorker 注册失败:', error);
+                });
             });
         }
     </script>

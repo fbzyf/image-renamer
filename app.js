@@ -1,5 +1,6 @@
 class ImageRenamer {
     constructor() {
+        this.basePath = window.BASE_PATH || '';
         this.uploadArea = document.getElementById('uploadArea');
         this.fileInput = document.getElementById('fileInput');
         this.previewArea = document.getElementById('previewArea');
@@ -322,7 +323,7 @@ class ImageRenamer {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
-            this.showNotification('所有文件下载完成', 'info');
+            this.showNotification('所有文件��载完成', 'info');
         } catch (error) {
             console.error('下载失败:', error);
             this.showNotification('下载过程中出现错误', 'error');
@@ -367,7 +368,7 @@ class ImageRenamer {
     async loadTestImage() {
         try {
             // 加载测试图片
-            const response = await fetch('test.jpg');
+            const response = await fetch(this.basePath + '/test.jpg');
             const blob = await response.blob();
             const file = new File([blob], 'test.jpg', { type: 'image/jpeg' });
             
