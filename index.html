@@ -6,43 +6,28 @@
     <title>AI 智能图片重命名工具</title>
     <link rel="stylesheet" href="./styles.css">
     <script>
-        (function() {
-            const isGitHub = location.hostname.includes('github.io');
-            window.APP_CONFIG = {
-                BASE_PATH: isGitHub ? '/image-renamer' : '',
-                DEEPSEEK_API_KEY: 'YOUR_DEEPSEEK_API_KEY',
-                API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
-                OCR_LANGUAGES: ['chi_sim', 'eng', 'chi_tra'],
-                OCR_CONFIDENCE_THRESHOLD: 0.65,
-                MAX_FILE_SIZE: 5 * 1024 * 1024,
-                SUPPORTED_FORMATS: [
-                    'image/jpeg',
-                    'image/png',
-                    'image/gif',
-                    'image/bmp',
-                    'image/webp'
-                ],
-                JPEG_EXTENSIONS: ['jpg', 'jpeg', 'jpe', 'jfif'],
-                AI_MODEL: "deepseek-chat",
-                AI_TEMPERATURE: 0.7,
-                MAX_TOKENS: 50,
-                MAX_FILENAME_LENGTH: 50,
-                FALLBACK_NAME: '未识别内容',
-                useLocalNaming: true
-            };
-
-            window.getConfig = function() {
-                if (!window.APP_CONFIG) {
-                    console.error('配置未加载！');
-                    return {
-                        useLocalNaming: true,
-                    };
-                }
-                return window.APP_CONFIG;
-            };
-
-            console.log('配置已加载:', window.APP_CONFIG);
-        })();
+        window.CONFIG = {
+            BASE_PATH: location.hostname.includes('github.io') ? '/image-renamer' : '',
+            DEEPSEEK_API_KEY: 'YOUR_DEEPSEEK_API_KEY',
+            API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
+            OCR_LANGUAGES: ['chi_sim', 'eng', 'chi_tra'],
+            OCR_CONFIDENCE_THRESHOLD: 0.65,
+            MAX_FILE_SIZE: 5 * 1024 * 1024,
+            SUPPORTED_FORMATS: [
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'image/bmp',
+                'image/webp'
+            ],
+            JPEG_EXTENSIONS: ['jpg', 'jpeg', 'jpe', 'jfif'],
+            AI_MODEL: "deepseek-chat",
+            AI_TEMPERATURE: 0.7,
+            MAX_TOKENS: 50,
+            MAX_FILENAME_LENGTH: 50,
+            FALLBACK_NAME: '未识别内容',
+            useLocalNaming: true
+        };
     </script>
 </head>
 <body>
@@ -86,15 +71,15 @@
         </div>
     </div>
     
-    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js" defer></script>
-    <script src="./app.js" defer></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <script src="./app.js"></script>
     
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swPath = window.APP_CONFIG.BASE_PATH + '/sw.js';
+                const swPath = window.CONFIG.BASE_PATH + '/sw.js';
                 navigator.serviceWorker.register(swPath, {
-                    scope: window.APP_CONFIG.BASE_PATH + '/'
+                    scope: window.CONFIG.BASE_PATH + '/'
                 })
                 .then(registration => {
                     console.log('ServiceWorker 注册成功:', registration.scope);

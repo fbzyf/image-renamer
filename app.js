@@ -1,6 +1,11 @@
 class ImageRenamer {
     constructor() {
-        this.config = window.getConfig();
+        // 直接使用全局配置
+        if (!window.CONFIG) {
+            throw new Error('配置未加载，请检查配置文件');
+        }
+        
+        this.config = window.CONFIG;
         this.basePath = this.config.BASE_PATH;
         this.uploadArea = document.getElementById('uploadArea');
         this.fileInput = document.getElementById('fileInput');
@@ -9,11 +14,7 @@ class ImageRenamer {
         
         this.images = [];
         this.initEventListeners();
-        
-        // 添加离线支持
         this.setupOfflineSupport();
-
-        // 添加配置验证
         this.validateConfig();
     }
 
@@ -166,7 +167,7 @@ class ImageRenamer {
     async processImage(imageData) {
         try {
             // 更新处理状态
-            this.updatePreviewStatus(imageData, '正在识别文字...');
+            this.updatePreviewStatus(imageData, '正在识��文字...');
 
             // 使用 Tesseract.js 进行 OCR，添加方向检测
             const result = await Tesseract.recognize(
@@ -225,7 +226,7 @@ class ImageRenamer {
                         role: "user",
                         content: `请根据以下图片中识别出的文本内容，生成一个简短的、有意义的文件名（不超过${this.config.MAX_FILENAME_LENGTH}个字符，不要包含特殊字符）。
                         原文件名：${originalName}
-                        识别的文本内容：${text}`
+                        识别的文���内容：${text}`
                     }],
                     temperature: this.config.AI_TEMPERATURE,
                     max_tokens: this.config.MAX_TOKENS
@@ -391,7 +392,7 @@ class ImageRenamer {
             '.hidden.txt',
             'CON.txt',
             'a'.repeat(100) + '.txt',
-            '测试文件名.jpg',
+            '���试文件名.jpg',
             '..dangerous.exe',
             'COM1.dll',
             'file with spaces.doc'
@@ -432,7 +433,7 @@ class ImageRenamer {
             console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出限制'}`);
         });
         
-        // 测试 OCR 功能
+        // ���试 OCR 功能
         if (this.images.length > 0) {
             console.log('\nOCR 测试结果:', await this.testOCR(this.images[0]));
         } else {
@@ -475,19 +476,11 @@ class ImageRenamer {
     }
 }
 
-// 在开发环境下自动运行测试
-if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-    window.runTests = () => {
-        if (window.app) {
-            window.app.runTests();
-        } else {
-            console.warn('应用尚未初始化');
-        }
-    };
-    console.log('可以在控制台使用 window.runTests() 运行测试');
-}
-
-// 初始化应用
-document.addEventListener('DOMContentLoaded', () => {
+// 等待 DOM 和配置都加载完成
+window.addEventListener('DOMContentLoaded', () => {
+    if (!window.CONFIG) {
+        console.error('配置未加载，应用初始化失败');
+        return;
+    }
     window.app = new ImageRenamer();
 }); 
