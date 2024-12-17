@@ -2,7 +2,11 @@ class ImageRenamer {
     constructor() {
         // 直接使用全局配置
         if (!window.CONFIG) {
-            throw new Error('配置未加载，请检查配置文件');
+            console.error('配置未加载，使用默认配置');
+            window.CONFIG = {
+                BASE_PATH: '/image-renamer',
+                // ... 其他默认配置
+            };
         }
         
         this.config = window.CONFIG;
@@ -62,7 +66,7 @@ class ImageRenamer {
                     const registration = await navigator.serviceWorker.register(swPath, {
                         scope: './'
                     });
-                    console.log('ServiceWorker 注册成功:', registration.scope);
+                    console.log('ServiceWorker ���册成功:', registration.scope);
                     this.showOfflineReady();
                 } catch (err) {
                     console.error('ServiceWorker 注册失败:', err);
@@ -185,7 +189,7 @@ class ImageRenamer {
                             this.updatePreviewStatus(imageData, `识别中: ${Math.round(m.progress * 100)}%`);
                         }
                     },
-                    // 添加���向检测和自动旋转
+                    // 添加方向检测和自动旋转
                     tessedit_pageseg_mode: Tesseract.PSM.AUTO_OSD,
                     preserve_interword_spaces: '1',
                     textord_tabfind_vertical_text: '1',
