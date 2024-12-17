@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 智能图片重命名工具</title>
-    <script>
+    <link rel="stylesheet" href="./styles.css">
+    <script type="text/javascript">
         const isGitHub = location.hostname.includes('github.io');
         window.BASE_PATH = isGitHub ? '/image-renamer' : '';
         
@@ -29,8 +30,9 @@
             FALLBACK_NAME: '未识别内容',
             useLocalNaming: true
         };
+
+        console.log('配置已加载:', window.CONFIG);
     </script>
-    <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
     <div class="container">
