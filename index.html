@@ -6,7 +6,7 @@
     <title>AI 智能图片重命名工具</title>
     <script>
         window.CONFIG = {
-            BASE_PATH: '/image-renamer',
+            BASE_PATH: location.hostname.includes('github.io') ? '/image-renamer' : '',
             DEEPSEEK_API_KEY: 'YOUR_DEEPSEEK_API_KEY',
             API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
             OCR_LANGUAGES: ['chi_sim', 'eng', 'chi_tra'],
@@ -27,6 +27,7 @@
             FALLBACK_NAME: '未识别内容',
             useLocalNaming: true
         };
+        console.log('配置已加载:', window.CONFIG);
     </script>
     <link rel="stylesheet" href="./styles.css">
 </head>
@@ -77,16 +78,14 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swPath = window.CONFIG.BASE_PATH + '/sw.js';
-                navigator.serviceWorker.register(swPath, {
-                    scope: window.CONFIG.BASE_PATH + '/'
-                })
-                .then(registration => {
-                    console.log('ServiceWorker 注册成功:', registration.scope);
-                })
-                .catch(error => {
-                    console.error('ServiceWorker 注册失败:', error);
-                });
+                const swPath = './sw.js';
+                navigator.serviceWorker.register(swPath)
+                    .then(registration => {
+                        console.log('ServiceWorker 注册成功:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('ServiceWorker 注册失败:', error);
+                    });
             });
         }
     </script>
