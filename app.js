@@ -58,13 +58,17 @@ class ImageRenamer {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    const registration = await navigator.serviceWorker.register('/image-renamer/sw.js', {
-                        scope: '/image-renamer/'
+                    const swPath = this.config.BASE_PATH + '/sw.js';
+                    const registration = await navigator.serviceWorker.register(swPath, {
+                        scope: this.config.BASE_PATH + '/'
                     });
                     console.log('ServiceWorker 注册成功:', registration.scope);
                     this.showOfflineReady();
                 } catch (err) {
                     console.error('ServiceWorker 注册失败:', err);
+                    if (err.name === 'TypeError') {
+                        console.warn('提示：请确保 sw.js 文件存在且可访问');
+                    }
                 }
             });
         }
@@ -167,7 +171,7 @@ class ImageRenamer {
     async processImage(imageData) {
         try {
             // 更新处理状态
-            this.updatePreviewStatus(imageData, '正在识��文字...');
+            this.updatePreviewStatus(imageData, '正在识别文字...');
 
             // 使用 Tesseract.js 进行 OCR，添加方向检测
             const result = await Tesseract.recognize(
@@ -225,8 +229,8 @@ class ImageRenamer {
                     messages: [{
                         role: "user",
                         content: `请根据以下图片中识别出的文本内容，生成一个简短的、有意义的文件名（不超过${this.config.MAX_FILENAME_LENGTH}个字符，不要包含特殊字符）。
-                        原文件名：${originalName}
-                        识别的文���内容：${text}`
+                        原文���名：${originalName}
+                        识别的文本内容：${text}`
                     }],
                     temperature: this.config.AI_TEMPERATURE,
                     max_tokens: this.config.MAX_TOKENS
@@ -392,7 +396,7 @@ class ImageRenamer {
             '.hidden.txt',
             'CON.txt',
             'a'.repeat(100) + '.txt',
-            '���试文件名.jpg',
+            '测试文件名.jpg',
             '..dangerous.exe',
             'COM1.dll',
             'file with spaces.doc'
@@ -430,10 +434,10 @@ class ImageRenamer {
         console.log('\n文件大小验证测试:');
         testSizes.forEach(size => {
             const isValid = size <= this.config.MAX_FILE_SIZE;
-            console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出限制'}`);
+            console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出��制'}`);
         });
         
-        // ���试 OCR 功能
+        // 测试 OCR 功能
         if (this.images.length > 0) {
             console.log('\nOCR 测试结果:', await this.testOCR(this.images[0]));
         } else {

@@ -16,6 +16,15 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v2
       
+      - name: Verify Files
+        shell: pwsh
+        run: |
+          # 检查必要文件是否存在
+          if (-not (Test-Path sw.js)) {
+            Write-Error "Error: sw.js not found!"
+            exit 1
+          }
+      
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
