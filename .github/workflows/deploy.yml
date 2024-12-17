@@ -24,6 +24,8 @@ jobs:
             Write-Error "Error: sw.js not found!"
             exit 1
           }
+          Write-Host "Found sw.js file"
+          Get-Content sw.js
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

@@ -58,6 +58,7 @@ class ImageRenamer {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
+                    // 确保使用正确的路径
                     const swPath = this.config.BASE_PATH + '/sw.js';
                     const registration = await navigator.serviceWorker.register(swPath, {
                         scope: this.config.BASE_PATH + '/'
@@ -66,8 +67,10 @@ class ImageRenamer {
                     this.showOfflineReady();
                 } catch (err) {
                     console.error('ServiceWorker 注册失败:', err);
+                    // 添加详细错误信息
                     if (err.name === 'TypeError') {
                         console.warn('提示：请确保 sw.js 文件存在且可访问');
+                        console.warn('当前路径:', this.config.BASE_PATH + '/sw.js');
                     }
                 }
             });
@@ -229,7 +232,7 @@ class ImageRenamer {
                     messages: [{
                         role: "user",
                         content: `请根据以下图片中识别出的文本内容，生成一个简短的、有意义的文件名（不超过${this.config.MAX_FILENAME_LENGTH}个字符，不要包含特殊字符）。
-                        原文���名：${originalName}
+                        原文名：${originalName}
                         识别的文本内容：${text}`
                     }],
                     temperature: this.config.AI_TEMPERATURE,
@@ -434,7 +437,7 @@ class ImageRenamer {
         console.log('\n文件大小验证测试:');
         testSizes.forEach(size => {
             const isValid = size <= this.config.MAX_FILE_SIZE;
-            console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出��制'}`);
+            console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出制'}`);
         });
         
         // 测试 OCR 功能
