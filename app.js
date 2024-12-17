@@ -55,7 +55,9 @@ class ImageRenamer {
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    const registration = await navigator.serviceWorker.register('/image-renamer/sw.js', {
+                        scope: '/image-renamer/'
+                    });
                     console.log('ServiceWorker 注册成功:', registration.scope);
                     this.showOfflineReady();
                 } catch (err) {
@@ -68,7 +70,7 @@ class ImageRenamer {
     showOfflineReady() {
         const notice = document.createElement('div');
         notice.className = 'offline-ready';
-        notice.textContent = '应用已可���线使用';
+        notice.textContent = '应用已可离线使用';
         document.body.appendChild(notice);
         
         setTimeout(() => {
@@ -353,7 +355,7 @@ class ImageRenamer {
         this.showNotification('已清除所有图片', 'info');
     }
 
-    // 添加测试方法
+    // 添加测试按钮
     addTestButton() {
         const testBtn = document.createElement('button');
         testBtn.textContent = '测试图片';

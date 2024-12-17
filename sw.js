@@ -1,10 +1,11 @@
 const CACHE_NAME = 'image-renamer-v1';
-const BASE_URL = '/image-renamer';
+const BASE_PATH = '/image-renamer';
+
 const CACHE_FILES = [
-    BASE_URL + '/',
-    BASE_URL + '/index.html',
-    BASE_URL + '/styles.css',
-    BASE_URL + '/app.js',
+    BASE_PATH + '/',
+    BASE_PATH + '/index.html',
+    BASE_PATH + '/styles.css',
+    BASE_PATH + '/app.js',
     'https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'
 ];
 
@@ -21,10 +22,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-    if (event.request.method !== 'GET') return;
-    
     const url = new URL(event.request.url);
-    if (url.origin === self.location.origin) {
+    // 只处理我们的应用路径
+    if (url.pathname.startsWith(BASE_PATH)) {
         event.respondWith(
             caches.match(event.request)
                 .then(response => response || fetch(event.request))

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI 智能图片重命名工具</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="/image-renamer/styles.css">
 </head>
 <body>
     <div class="container">
@@ -48,17 +48,15 @@
     </div>
     
     <script>
+        // 添加基础路径配置
+        const BASE_PATH = '/image-renamer';
+        
         // 内联完整配置
         const CONFIG = {
-            // 默认使用本地命名模式
             DEEPSEEK_API_KEY: 'YOUR_DEEPSEEK_API_KEY',
             API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
-            
-            // OCR 配置
             OCR_LANGUAGES: ['chi_sim', 'eng', 'chi_tra'],
             OCR_CONFIDENCE_THRESHOLD: 0.65,
-            
-            // 文件处理配置
             MAX_FILE_SIZE: 5 * 1024 * 1024,
             SUPPORTED_FORMATS: [
                 'image/jpeg',
@@ -68,21 +66,15 @@
                 'image/webp'
             ],
             JPEG_EXTENSIONS: ['jpg', 'jpeg', 'jpe', 'jfif'],
-            
-            // AI 配置
             AI_MODEL: "deepseek-chat",
             AI_TEMPERATURE: 0.7,
             MAX_TOKENS: 50,
-            
-            // 文件名配置
             MAX_FILENAME_LENGTH: 50,
             FALLBACK_NAME: '未识别内容',
-            
-            // 默认使用本地命名
             useLocalNaming: true
         };
     </script>
     <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
-    <script src="./app.js"></script>
+    <script src="/image-renamer/app.js"></script>
 </body>
 </html> 
