@@ -1,0 +1,26 @@
+# 配置文件（包含敏感信息）
+config.js
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 依赖和构建目录
+node_modules/
+dist/
+build/
+
+# 日志文件
+*.log
+npm-debug.log*
+
+# 测试文件
+test.jpg
+test.png
+test.gif 
