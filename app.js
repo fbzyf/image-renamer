@@ -1,6 +1,7 @@
 class ImageRenamer {
     constructor() {
-        this.basePath = window.BASE_PATH || '';
+        this.config = window.getConfig();
+        this.basePath = this.config.BASE_PATH;
         this.uploadArea = document.getElementById('uploadArea');
         this.fileInput = document.getElementById('fileInput');
         this.previewArea = document.getElementById('previewArea');
@@ -84,7 +85,7 @@ class ImageRenamer {
     }
 
     validateConfig() {
-        if (!CONFIG.DEEPSEEK_API_KEY || CONFIG.DEEPSEEK_API_KEY === 'YOUR_DEEPSEEK_API_KEY') {
+        if (!this.config.DEEPSEEK_API_KEY || this.config.DEEPSEEK_API_KEY === 'YOUR_DEEPSEEK_API_KEY') {
             console.warn('未配置 DeepSeek API Key，将使用本地文件名生成');
             this.useLocalNaming = true;
         }
@@ -99,27 +100,24 @@ class ImageRenamer {
         const imageFiles = Array.from(files).filter(file => {
             // 检查文件类型
             const isSupported = file.type.startsWith('image/') && 
-                CONFIG.SUPPORTED_FORMATS.includes(file.type);
+                this.config.SUPPORTED_FORMATS.includes(file.type);
             
             // 获取文件扩展名
             const extension = file.name.split('.').pop().toLowerCase();
             
             // 检查特殊格式
-            const isJpeg = CONFIG.JPEG_EXTENSIONS.includes(extension);
-            const isTiff = CONFIG.TIFF_EXTENSIONS.includes(extension);
+            const isJpeg = this.config.JPEG_EXTENSIONS.includes(extension);
             
-            return isSupported || 
-                (file.type === 'image/jpeg' && isJpeg) ||
-                (file.type === 'image/tiff' && isTiff);
+            return isSupported || (file.type === 'image/jpeg' && isJpeg);
         });
         
         if (imageFiles.length === 0) {
-            this.showNotification('请上传支持的图片格式：JPG/JPEG, PNG, GIF, BMP, WebP, TIFF', 'error');
+            this.showNotification('请上传支持的图片格式：JPG/JPEG, PNG, GIF, BMP, WebP', 'error');
             return;
         }
         
         // 检查文件大小
-        const oversizedFiles = imageFiles.filter(file => file.size > CONFIG.MAX_FILE_SIZE);
+        const oversizedFiles = imageFiles.filter(file => file.size > this.config.MAX_FILE_SIZE);
         if (oversizedFiles.length > 0) {
             this.showNotification(`${oversizedFiles.length} 个文件超过大小限制 (5MB)`, 'warning');
             return;
@@ -173,7 +171,7 @@ class ImageRenamer {
             // 使用 Tesseract.js 进行 OCR，添加方向检测
             const result = await Tesseract.recognize(
                 imageData.preview,
-                CONFIG.OCR_LANGUAGES.join('+'),
+                this.config.OCR_LANGUAGES.join('+'),
                 { 
                     logger: m => {
                         if (m.status === 'recognizing text') {
@@ -189,7 +187,7 @@ class ImageRenamer {
             );
 
             // 检查识别置信度
-            if (result.data.confidence < CONFIG.OCR_CONFIDENCE_THRESHOLD) {
+            if (result.data.confidence < this.config.OCR_CONFIDENCE_THRESHOLD) {
                 this.updatePreviewStatus(imageData, '识别质量较低，建议重新上传清晰图片', 'warning');
                 return;
             }
@@ -215,22 +213,22 @@ class ImageRenamer {
 
     async generateAIFileName(text, originalName) {
         try {
-            const response = await fetch(CONFIG.API_ENDPOINT, {
+            const response = await fetch(this.config.API_ENDPOINT, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${CONFIG.DEEPSEEK_API_KEY}`
+                    'Authorization': `Bearer ${this.config.DEEPSEEK_API_KEY}`
                 },
                 body: JSON.stringify({
-                    model: CONFIG.AI_MODEL,
+                    model: this.config.AI_MODEL,
                     messages: [{
                         role: "user",
-                        content: `请根据以下图片中识别出的文本内容，生成一个简短的、有意义的文件名（不超过${CONFIG.MAX_FILENAME_LENGTH}个字符，不要包含特殊字符）。
+                        content: `请根据以下图片中识别出的文本内容，生成一个简短的、有意义的文件名（不超过${this.config.MAX_FILENAME_LENGTH}个字符，不要包含特殊字符）。
                         原文件名：${originalName}
                         识别的文本内容：${text}`
                     }],
-                    temperature: CONFIG.AI_TEMPERATURE,
-                    max_tokens: CONFIG.MAX_TOKENS
+                    temperature: this.config.AI_TEMPERATURE,
+                    max_tokens: this.config.MAX_TOKENS
                 })
             });
 
@@ -254,7 +252,7 @@ class ImageRenamer {
     generateSimpleFileName(text) {
         const words = text.split(/\s+/).filter(w => w.length > 0);
         const name = words.slice(0, 3).join('-');
-        return name || CONFIG.FALLBACK_NAME;
+        return name || this.config.FALLBACK_NAME;
     }
 
     updatePreviewStatus(imageData, status, type = 'info') {
@@ -323,7 +321,7 @@ class ImageRenamer {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
-            this.showNotification('所有文件��载完成', 'info');
+            this.showNotification('所有文件下载完成', 'info');
         } catch (error) {
             console.error('下载失败:', error);
             this.showNotification('下载过程中出现错误', 'error');
@@ -344,7 +342,7 @@ class ImageRenamer {
             .replace(/[<>:"/\\|?*\x00-\x1F]/g, '-') // 移除不安全的字符
             .replace(/^\.+/, '') // 移除开头的点
             .replace(/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$/i, '_$1') // 处理 Windows 保留文件名
-            .slice(0, CONFIG.MAX_FILENAME_LENGTH); // 限制长度
+            .slice(0, this.config.MAX_FILENAME_LENGTH); // 限制长度
 
         return cleanName + ext;
     }
@@ -385,7 +383,7 @@ class ImageRenamer {
         console.log('开始测试...');
         
         // 测试配置加载
-        console.log('测试配置:', CONFIG);
+        console.log('测试配置:', this.config);
         
         // 测试文件名清理
         const testNames = [
@@ -416,7 +414,7 @@ class ImageRenamer {
         
         console.log('\n文件类型验证测试:');
         testTypes.forEach(type => {
-            const isSupported = CONFIG.SUPPORTED_FORMATS.includes(type);
+            const isSupported = this.config.SUPPORTED_FORMATS.includes(type);
             console.log(`${type}: ${isSupported ? '支持' : '不支持'}`);
         });
         
@@ -430,7 +428,7 @@ class ImageRenamer {
         
         console.log('\n文件大小验证测试:');
         testSizes.forEach(size => {
-            const isValid = size <= CONFIG.MAX_FILE_SIZE;
+            const isValid = size <= this.config.MAX_FILE_SIZE;
             console.log(`${(size / (1024 * 1024)).toFixed(1)}MB: ${isValid ? '允许' : '超出限制'}`);
         });
         
@@ -448,7 +446,7 @@ class ImageRenamer {
         try {
             const result = await Tesseract.recognize(
                 imageData.preview,
-                CONFIG.OCR_LANGUAGES.join('+')
+                this.config.OCR_LANGUAGES.join('+')
             );
             return {
                 text: result.data.text,
