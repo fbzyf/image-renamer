@@ -24,8 +24,14 @@ jobs:
             Write-Error "Error: sw.js not found!"
             exit 1
           }
+          if (-not (Test-Path config.js)) {
+            Write-Error "Error: config.js not found!"
+            exit 1
+          }
           Write-Host "Found sw.js file"
           Get-Content sw.js
+          Write-Host "Found config.js file"
+          Get-Content config.js
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
